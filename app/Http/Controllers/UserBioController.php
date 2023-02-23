@@ -2,13 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ManipulateBioRequest;
 use App\Models\UserBio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserBioController extends Controller
 {
+    public function index()
+    {
+        $data = UserBio::all();
+        return response()->json([
+            'data' => $data
+        ], 200);
+    }
+
+    public function show(UserBio $userBio)
+    {
+        $result = [];
+        $this->extractArray($userBio->bio, $result);
+        return response()->json([
+            'data' => $result
+        ], 200);
+    }
+
+    private function extractArray($array, &$result, $prefix = '')
+    {
+        foreach ($array as $key => $value) {
+            $name = $prefix . $key;
+            $type = gettype($value);
+            if ($type == 'array') {
+                $this->extractArray($value, $result, $name . '.');
+            } else {
+                $result[] = [
+                    'name' => $name,
+                    'type' => $type,
+                    'value' => $value
+                ];
+            }
+        }
+    }
+
+    public function destroy()
+    {
+        return response()->json([
+            'message' => 'deleted successfully'
+        ], 200);
+    }
+
     public function store(Request $request)
     {
         $startTime = microtime(true);

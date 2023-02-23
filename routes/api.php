@@ -22,5 +22,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware(['auth:api', 'request.limit:5,20'])->group(function () {
     Route::match(['get', 'post'], 'store-bio', [UserBioController::class, 'store']);
-    Route::match(['get', 'post'], 'user_bios', [UserBioController::class, 'manipulate']);
+    Route::match(['get', 'post'], 'manipulate-bio', [UserBioController::class, 'manipulate']);
 });
+Route::apiResource('user-bios', UserBioController::class)->middleware(['request.limit:5,20'])->only(['index', 'show', 'destroy']);
